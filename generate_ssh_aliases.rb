@@ -13,11 +13,15 @@ ssh_config_path = Pathname.new("#{Dir.home}/.ssh/config")
 gcp_envs = london_meta_path + "gcp-environments"
 aws_envs = london_meta_path + "aws-environments"
 
-envs = gcp_envs.children.select { |c| c.directory? } +
+all_env_paths = gcp_envs.children.select { |c| c.directory? } +
   aws_envs.children.select { |c| c.directory? }
 
-all_parsed_envs = parse_envs(envs)
+envs = all_env_paths.map do |path|
+  OpsmanEnvFactory.create_env(path)
+end
 
-add_envs_to_ssh_config(all_parsed_envs, ssh_config_path)
+envs.compact.each do |env|
+  env.add_to_ssh_config(ssh_config_path)
+end
 
 puts "Done."
