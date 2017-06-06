@@ -67,14 +67,16 @@ class OpsmanEnv
     ssh_alias = create_formatted_ssh_alias(self)
     File.open(ssh_config_path, 'a') { |f| f.write(ssh_alias) }
   end
-end
 
-def create_formatted_ssh_alias(env)
-"Host #{env.name}
-  HostName #{env.ssh_host}
-  User #{env.ssh_user}
-  IdentityFile #{env.ssh_key}
-  StrictHostKeyChecking no
+  private
+
+  def create_formatted_ssh_alias
+    "Host #{self.name}
+HostName #{self.ssh_host}
+User #{self.ssh_user}
+IdentityFile #{self.ssh_key}
+StrictHostKeyChecking no
 
 "
+  end
 end
