@@ -24,13 +24,13 @@ def parse_envs(paths)
 
     begin
       if config["iaas_type"] == "gcp"
-        envs << create_gcp_env(e, config)
+        envs << create_gcp_env(path, config)
       else
-        envs << create_aws_env(e, config)
+        envs << create_aws_env(path, config)
       end
 
-    rescue KeyError => err
-      puts "-- error parsing config for #{e.basename.to_s} [#{err}]"
+    rescue Exception => err
+      puts "-- error parsing config for #{path.basename.to_s} [#{err}]"
       next
     end
   end
