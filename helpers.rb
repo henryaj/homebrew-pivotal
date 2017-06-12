@@ -1,5 +1,15 @@
 #!/usr/bin/env ruby
 
+london_meta_path = Pathname.new("#{Dir.home}/workspace/london-meta/")
+london_services_locks_path = Pathname.new("#{Dir.home}/workspace/london-services-locks/")
+gcp_envs = london_meta_path + "gcp-environments"
+aws_envs = london_meta_path + "aws-environments"
+
+ALL_ENV_PATHS = gcp_envs.children.select { |c| c.directory? } +
+  aws_envs.children.select { |c| c.directory? }
+
+SSH_CONFIG_PATH = Pathname.new("#{Dir.home}/.ssh/config")
+
 class OpsmanEnvFactory
   def self.create_env(path)
     config_path = Dir["#{Dir.home}/workspace/london-services-locks/**/#{path.basename.to_s}"].first
@@ -54,18 +64,18 @@ class OpsmanEnv
     @ssh_key = args.fetch(:ssh_key)
   end
 
-  def add_to_ssh_config(ssh_config_path)
-    raise "No such file - #{ssh_config_path}" unless File.exist? ssh_config_path
-    ssh_config = File.read(ssh_config_path)
+  def add_to_ssh_config(SSH_CONFIG_PATH)
+    raise "No such file - #{SSH_CONFIG_PATH}" unless File.exist? SSH_CONFIG_PATH
+    ssh_config = File.read(SSH_CONFIG_PATH)
 
     if ssh_config.include?(self.name)
       puts "-- skipping #{self.name}, already present in config"
       return
     end
 
-    puts "Adding alias for #{self.name}"
+    puts_blue "Adding alias for #{self.name}"
     ssh_alias = create_formatted_ssh_alias
-    File.open(ssh_config_path, 'a') { |f| f.write(ssh_alias) }
+    File.open(SSH_CONFIG_PATH, 'a') { |f| f.write(ssh_alias) }
   end
 
   private
