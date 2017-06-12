@@ -52,6 +52,8 @@ class OpsmanEnvFactory
 end
 
 class OpsmanEnv
+  require 'json'
+
   attr_accessor :name, :username, :password, :url, :ssh_host, :ssh_user, :ssh_key
 
   def initialize(args)
@@ -76,6 +78,17 @@ class OpsmanEnv
     puts_blue "Adding alias for #{self.name}"
     ssh_alias = create_formatted_ssh_alias
     File.open(SSH_CONFIG_PATH, 'a') { |f| f.write(ssh_alias) }
+  end
+
+  def get_director_ip
+    JSON.parse(`om -k -t #{self.url} -u #{self.username} -p #{self.password} \
+      curl -p /api/installation_settings 2> /dev/null`)
+      .fetch("ip_assignments")
+      .fetch("assignments")
+      .select { |name,_| name.start_with?("p-bosh-") }
+      .values[0]
+      .select { |name,_| name.start_with?("director-") }
+      .values[0].values[0].first
   end
 
   private

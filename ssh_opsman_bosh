@@ -17,15 +17,17 @@ fail "Usage: #{script_name} [ops-man-environment-name]" unless om_env_name
 om_env = envs.select { |env| env.name == om_env_name }.first
 fail "Environment #{om_env_name} not recognised" unless om_env
 
+director_ip = om_env.get_director_ip
+
 `chmod 0400 #{om_env.ssh_key}`
 `ssh-add #{om_env.ssh_key}`
-`set -e; sudo sshuttle -r #{om_env.ssh_user}@#{om_env.ssh_host} "10.0.0.0/22" "10.0.4.0/22" "10.0.8.0/22" --daemon`
+`sudo sshuttle -r #{om_env.ssh_user}@#{om_env.ssh_host} "10.0.0.0/8" --daemon`
 
 trap("SIGINT") { `sudo kill $(cat sshuttle.pid)`; exit 0 }
 
 puts ""
 puts "> Open a new terminal and run"
-puts_blue "ssh vcap@10.0.0.5"
+puts_blue "ssh vcap@#{director_ip}"
 puts ""
 puts "> Hit Ctrl-C when done."
 
