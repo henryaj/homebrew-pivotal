@@ -64,7 +64,7 @@ class OpsmanEnv
     end
 
     puts "Adding alias for #{self.name}"
-    ssh_alias = create_formatted_ssh_alias(self)
+    ssh_alias = create_formatted_ssh_alias
     File.open(ssh_config_path, 'a') { |f| f.write(ssh_alias) }
   end
 
