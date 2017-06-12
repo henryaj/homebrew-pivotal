@@ -64,7 +64,7 @@ class OpsmanEnv
     @ssh_key = args.fetch(:ssh_key)
   end
 
-  def add_to_ssh_config(SSH_CONFIG_PATH)
+  def add_to_ssh_config(ssh_config_path)
     raise "No such file - #{SSH_CONFIG_PATH}" unless File.exist? SSH_CONFIG_PATH
     ssh_config = File.read(SSH_CONFIG_PATH)
 
