@@ -7,17 +7,7 @@ require_relative './helpers.rb'
 
 script_name = "target_opsman_bosh"
 
-london_meta_path = Pathname.new("#{Dir.home}/workspace/london-meta/")
-london_services_locks_path = Pathname.new("#{Dir.home}/workspace/london-services-locks/")
-ssh_config_path = Pathname.new("#{Dir.home}/.ssh/config")
-
-gcp_envs = london_meta_path + "gcp-environments"
-aws_envs = london_meta_path + "aws-environments"
-
-all_env_paths = gcp_envs.children.select { |c| c.directory? } +
-  aws_envs.children.select { |c| c.directory? }
-
-envs = all_env_paths.map do |path|
+envs = ALL_ENV_PATHS.map do |path|
   OpsmanEnvFactory.create_env(path)
 end.compact
 
