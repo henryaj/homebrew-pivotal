@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'pathname'
+require 'tempfile'
+require_relative './helpers.rb'
+
+script_name = "target_opsman_bosh"
+
+london_meta_path = Pathname.new("#{Dir.home}/workspace/london-meta/")
+london_services_locks_path = Pathname.new("#{Dir.home}/workspace/london-services-locks/")
+ssh_config_path = Pathname.new("#{Dir.home}/.ssh/config")
+
+gcp_envs = london_meta_path + "gcp-environments"
+aws_envs = london_meta_path + "aws-environments"
+
+all_env_paths = gcp_envs.children.select { |c| c.directory? } +
+  aws_envs.children.select { |c| c.directory? }
+
+envs = all_env_paths.map do |path|
+  OpsmanEnvFactory.create_env(path)
+end.compact
+
+om_env_name = ARGV[0]
+fail "Usage: #{script_name} [ops-man-environment-name]" unless om_env_name
+
+om_env = envs.select { |env| env.name == om_env_name }.first
+fail "Environment #{om_env_name} not recognised" unless om_env
+
+director_credentials = JSON.parse(`om -k -t #{om_env.url} -u #{om_env.username} -p #{om_env.password} \
+  curl -p /api/v0/deployed/director/credentials/director_credentials 2> /dev/null`)
+director_username = director_credentials.
+  fetch("credential").fetch("value").fetch("identity")
+director_password = director_credentials.
+  fetch("credential").fetch("value").fetch("password")
+
+`ssh-add #{om_env.ssh_key}; sudo sshuttle -r #{om_env.ssh_user}@#{om_env.ssh_host} "10.0.0.0/24" "10.0.4.0/22" "10.0.8.0/22" --daemon`
+trap("SIGINT") { `sudo kill $(cat sshuttle.pid)`; exit 0 }
+
+root_ca_cert = Tempfile.new
+root_ca_cert.write(`ssh #{om_env.ssh_user}@#{om_env.ssh_host} "cat /var/tempest/workspaces/default/root_ca_certificate"`)
+root_ca_cert.close
+
+puts ""
+puts "> Open a new terminal and run"
+puts_blue "bosh-cli --ca-cert #{root_ca_cert.path} -e 10.0.0.5 log-in"
+puts "> with username #{director_username}"
+puts "> and password #{director_password}"
+puts ""
+puts "> Hit Ctrl-C when done."
+
+sleep

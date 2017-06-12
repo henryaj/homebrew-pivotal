@@ -80,3 +80,12 @@ StrictHostKeyChecking no
 "
   end
 end
+
+def fail(message)
+  puts message
+  exit 1
+end
+
+def puts_blue(message)
+  puts "\u001b[034m" + message + "\u001b[0m"
+end
