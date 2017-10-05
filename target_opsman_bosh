@@ -7,6 +7,8 @@ require_relative './helpers.rb'
 
 script_name = "target_opsman_bosh"
 
+pull_repos
+
 envs = ALL_ENV_PATHS.map do |path|
   OpsmanEnvFactory.create_env(path)
 end.compact

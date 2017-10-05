@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
-london_meta_path = Pathname.new("#{Dir.home}/workspace/london-meta/")
-london_services_locks_path = Pathname.new("#{Dir.home}/workspace/london-services-locks/")
-gcp_envs = london_meta_path + "gcp-environments"
-aws_envs = london_meta_path + "aws-environments"
+LONDON_META_PATH = Pathname.new("#{Dir.home}/workspace/london-meta/")
+LONDON_SERVICES_LOCKS_PATH = Pathname.new("#{Dir.home}/workspace/london-services-locks/")
+gcp_envs = LONDON_META_PATH + "gcp-environments"
+aws_envs = LONDON_META_PATH + "aws-environments"
 
 ALL_ENV_PATHS = gcp_envs.children.select { |c| c.directory? } +
   aws_envs.children.select { |c| c.directory? }
@@ -102,6 +102,11 @@ StrictHostKeyChecking no
 
 "
   end
+end
+
+def pull_repos
+  `pushd #{LONDON_SERVICES_LOCKS_PATH} > /dev/null; git pull; popd`
+  `pushd #{LONDON_META_PATH} > /dev/null; git pull; popd`
 end
 
 def fail(message)
