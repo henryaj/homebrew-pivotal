@@ -1,9 +1,9 @@
 class PcfHelpers < Formula
   desc "Scripts for making interacting with PCF environments easier"
   homepage "https://github.com/henryaj/homebrew-pivotal"
-  version "v0.0.1"
+  version "v0.0.2"
   url "https://github.com/henryaj/homebrew-pivotal/archive/#{version}.tar.gz"
-  sha256 "463c765b10958b06a1c407567ab051862fcf312f5f03a214ac7be6b9f341a1a4"
+  sha256 ""
 
   def install
     bin.install "helpers.rb" => "helpers.rb"
