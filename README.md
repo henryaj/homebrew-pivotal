@@ -1,6 +1,8 @@
-# services-helpers
+## Installation
 
-Helper scripts for working with Ops Manager environments.
+`brew install henryaj/pivotal/pcf-helpers`
+
+## Helpers
 
 ### `pcf_generate_ssh_aliases`
 
