@@ -9,6 +9,7 @@ class PcfHelpers < Formula
     bin.install "helpers.rb" => "helpers.rb"
     bin.install "generate_ssh_aliases" => "pcf_generate_ssh_aliases"
     bin.install "target_opsman_bosh" => "pcf_target_bosh"
+    bin.install "ssh_opsman_bosh" => "pcf_ssh_bosh"
   end
 
   def post_install
