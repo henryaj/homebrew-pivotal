@@ -1,6 +1,6 @@
 ## Installation
 
-`brew install henryaj/pivotal/pcf-helpers`
+`$ brew install henryaj/pivotal/pcf-helpers`
 
 ## Helpers
 
